@@ -5,7 +5,7 @@ services:
     routes:
     - prefix: /api
       name: api
-      upstream: api
+      upstream: docker.for.mac.localhost
       port: 8000
     - prefix: /outputs
       name: outputs

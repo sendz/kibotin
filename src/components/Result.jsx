@@ -10,7 +10,7 @@ export const Result = (props) => {
       alt={"output"}
       style={{ width: "100%" }}
       src={
-        "/outputs/output_" +
+        "https://kibotin.lombokgeeks.xyz/outputs/output_" +
         outputId +
         "_switch.svg"
       }

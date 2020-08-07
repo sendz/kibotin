@@ -27,31 +27,54 @@ import {SwitchCutoutSelector} from './components/SwitchCutoutSelector';
 import {StabCutoutSelector} from './components/StabCutoutSelector';
 import {KerfInput} from './components/KerfInput';
 import { toast } from 'react-toastify';
+import {CASE_TYPE} from './constants/CASE_TYPE';
+import {CaseTypeSelector} from './components/CaseTypeSelector';
+import {SandwichCaseHoles} from './components/SandwichCaseHoles';
+import {CornerRadius} from './components/CornerRadius';
+import {SandwichCaseHolesSize} from './components/SandwichCaseHolesSize';
+import {SandwichCaseHolesEdge} from './components/SandwichCaseHolesEdge';
 
 export const Kibotin = () => {
-  const [kerf, setKerf] = useState(0);
+  const [kerf, setKerf] = useState(null);
   const [layout, setLayout] = useState("");
   const [stabType, setStabType] = useState(STAB_TYPE.CHERRY_COSTAR.value);
   const [switchType, setSwitchType] = useState(SWITCH_TYPE.CLASSIC_MX.value);
+  const [caseType, setCaseType] = useState(CASE_TYPE.CASE_NONE.value);
+  const [caseHoles, setCaseHoles] = useState(null);
+  const [cornerRadius, setCornerRadius] = useState(null);
+  const [caseHoleSize, setCaseHoleSize] = useState(null);
+  const [caseHoleEdge, setCaseHoleEdge] = useState(null);
   const [outputId, setOutputId] = useState(null);
+  const [removePokerSlots] = useState(false);
 
   const generate = () => {
     if (!layout) {
-      toast.warn("Layout's RAW value should not be empty.", {
+      toast.warn('Layout\'s RAW value should not be empty.', {
         position: 'top-center',
         hideProgressBar: true
       });
       return false;
     }
     const payload = {
-      layout: window.jsonl.parse("[" + layout + "]"),
-      "switch-type": switchType,
-      "stab-type": stabType,
-      kerf
+      layout: window.jsonl.parse('[' + layout + ']'),
+      'switch-type': switchType,
+      'stab-type': stabType,
+      kerf,
+      'fillet': cornerRadius
     };
 
+    if (caseType !== CASE_TYPE.CASE_NONE.value) {
+      payload['case'] = {
+        'case-type': caseType,
+        'poker-slots-remove': removePokerSlots,
+        'mount-holes-num': caseHoles,
+        'mount-holes-size': caseHoleSize,
+        'mount-holes-edge': caseHoleEdge
+      }
+    }
+
     axios
-      .post("/api/generate", payload)
+      .post("https://kibotin.lombokgeeks.xyz/api/generate", payload)
       .then(result => {
         setOutputId(result.data.id)
       })
@@ -106,12 +129,16 @@ export const Kibotin = () => {
                     >
                       <StabCutoutSelector stabType={stabType} onChange={value => setStabType(value)}/>
                     </EuiFormRow>
-                    <EuiFormRow
-                      label="Kerf"
-                      helpText="Use dot as decimal separator"
-                    >
-                      <KerfInput onChange={value => setKerf(value)}/>
-                    </EuiFormRow>
+                    <KerfInput onChange={value => setKerf(value)}/>
+                    <CornerRadius onChange={value => setCornerRadius(value)}/>
+                    <CaseTypeSelector caseType={caseType} onChange={value => setCaseType(value)} />
+                    {caseType === CASE_TYPE.CASE_SANDWICH.value && (
+                      <React.Fragment>
+                        <SandwichCaseHoles onChange={value => setCaseHoles(value)}/>
+                        <SandwichCaseHolesSize onChange={value => setCaseHoleSize(value)}/>
+                        <SandwichCaseHolesEdge onChange={value => setCaseHoleEdge(value)}/>
+                      </React.Fragment>
+                    )}
                     <EuiSpacer />
                     <EuiFormRow>
                       <EuiButton fill onClick={generate}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {EuiSelect} from '@elastic/eui';
 import {STAB_TYPE} from '../constants/STAB_TYPE';
-import PropTypes from 'prop-types'
+import * as PropTypes from 'prop-types'
 
 const stabOptions = Object.keys(STAB_TYPE).map(type => STAB_TYPE[type]);
 

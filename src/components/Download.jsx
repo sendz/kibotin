@@ -18,7 +18,7 @@ export const Download = (props) => {
           fill
           onClick={() => {
             download(
-              '/outputs/output_' +
+              'https://kibotin.lombokgeeks.xyz/outputs/output_' +
               outputId +
               '_switch.' + fileType
             );
